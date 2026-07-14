@@ -18,7 +18,7 @@ RUN go tool templ generate -path ./internal/components \
 
 # Build static binary
 RUN CGO_ENABLED=0 go build \
-    -ldflags="-s -w -X go-htmx-template/internal/version.Value=${VERSION}" \
+    -ldflags="-s -w -X https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/version.Value=${VERSION}" \
     -o my-app ./cmd/server
 
 ## Deploy

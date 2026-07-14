@@ -14,7 +14,7 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X go-htmx-template/internal/version.Value={{.Version}}
+      - -s -w -X https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/version.Value={{.Version}}
     goos:
       - linux
       - windows

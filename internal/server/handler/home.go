@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"go-htmx-template/internal/components/core"
-	"go-htmx-template/internal/components/home"
+	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/components/core"
+	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/components/home"
 	"net/http"
 	"sync/atomic"
 )

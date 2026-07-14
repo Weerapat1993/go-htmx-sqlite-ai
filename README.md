@@ -385,12 +385,12 @@ This package in `internal/version/` allows you to set a version at build time. I
 `dev`. To set the version run the following command,
 
 ```shell
-go build -o ./app -ldflags="-X go-htmx-template/internal/version.Value=1.0.0" ./cmd/server
+go build -o ./app -ldflags="-X https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/version.Value=1.0.0" ./cmd/server
 ```
 
 ## Github Workflow
 
 The repository comes with two Github workflows as well. One called `ci.yml` that lints and 
 tests your code. The other called `release.yml` that creates a tag, GitHub Release, run [GoReleaser](https://goreleaser.com/) to build and 
-attach all the binaries, and published the docker image. See release [v1.0.2](https://github.com/Piszmog/go-htmx-template/releases/tag/v1.0.2) as an example.
+attach all the binaries, and published the docker image. See release [v1.0.2](https://github.com/Piszmog/https://github.com/Weerapat1993/go-htmx-sqlite-ai/releases/tag/v1.0.2) as an example.
 

@@ -15,5 +15,5 @@ find . -type d -name .git -prune -o \
 	-o -name '*.json' -o -name '*.toml' -o -name '*.css' -o -name '*.js' -o -name '*.html' \
 	-o -name '*.txt' -o -name 'Dockerfile' -o -name 'Makefile' \) \
 	-print0 | while IFS= read -r -d '' file; do
-	sed -e "s|go-htmx-template|${new_module}|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+	sed -e "s|https://github.com/Weerapat1993/go-htmx-sqlite-ai|${new_module}|g" "$file" > "$file.tmp" && mv "$file.tmp" "$file"
 done

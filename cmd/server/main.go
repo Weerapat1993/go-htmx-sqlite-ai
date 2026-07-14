@@ -8,10 +8,10 @@ import (
 	"os"
 	"strconv"
 
-	"go-htmx-template/internal/db"
-	"go-htmx-template/internal/log"
-	"go-htmx-template/internal/server"
-	"go-htmx-template/internal/server/router"
+	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db"
+	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/log"
+	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server"
+	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/router"
 )
 
 const defaultRateLimit = 50

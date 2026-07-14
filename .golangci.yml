@@ -33,11 +33,11 @@ linters:
         - anon
         - stdlib
         - github.com/a-h/templ.Component
-        - go-htmx-template/internal/db.Database
+        - https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db.Database
     tagliatelle:
       case:
         rules:
           json: snake
     wrapcheck:
       ignore-package-globs:
-        - go-htmx-template/internal/*
+        - https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/*

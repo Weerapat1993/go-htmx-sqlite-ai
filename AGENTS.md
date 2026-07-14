@@ -65,8 +65,8 @@ This file contains comprehensive guidelines for AI coding agents working in this
 
       "github.com/a-h/templ"
 
-      "go-htmx-template/internal/db"
-      "go-htmx-template/internal/log"
+      "https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db"
+      "https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/log"
   )
   ```
 

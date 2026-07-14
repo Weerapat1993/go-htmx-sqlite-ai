@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"go-htmx-template/internal/server/middleware"
+	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/middleware"
 )
 
 var devIPConfig = middleware.IPConfig{TrustProxyHeaders: false}

@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"go-htmx-template/internal/server/handler"
+	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/handler"
 )
 
 func TestHealth(t *testing.T) {

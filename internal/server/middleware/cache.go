@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"go-htmx-template/internal/version"
+	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/version"
 	"net/http"
 )
 

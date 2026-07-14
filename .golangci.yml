@@ -1,0 +1,43 @@
+version: "2"
+linters:
+  default: all
+  disable:
+    - canonicalheader
+    - depguard
+    - dupl
+    - exhaustruct
+    - gocyclo
+    - lll
+    - maintidx
+    - nlreturn
+    - noinlineerr
+    - revive
+    - varnamelen
+    - wsl
+    - wsl_v5
+    - gomodguard
+  exclusions:
+    rules:
+      - path: "_test\\.go"
+        linters:
+          - funlen
+          - maintidx
+          - err113
+          - gochecknoglobals
+          - goconst
+  settings:
+    ireturn:
+      allow:
+        - error
+        - empty
+        - anon
+        - stdlib
+        - github.com/a-h/templ.Component
+        - go-htmx-template/internal/db.Database
+    tagliatelle:
+      case:
+        rules:
+          json: snake
+    wrapcheck:
+      ignore-package-globs:
+        - go-htmx-template/internal/*

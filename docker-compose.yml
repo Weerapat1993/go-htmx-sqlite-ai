@@ -1,0 +1,32 @@
+services:
+  migrate:
+    image: golang:1.26
+    working_dir: /app
+    volumes:
+      - .:/app:ro
+      - db-data:/data
+    entrypoint: ["/app/migrate.sh"]
+    command: ["-p", "sqlite", "-u", "/data/db.sqlite3"]
+
+  app:
+    build:
+      context: .
+      args:
+        VERSION: dev
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      LOG_LEVEL: info
+      LOG_OUTPUT: text
+      DB_URL: /data/db.sqlite3
+      RATE_LIMIT: 50
+    volumes:
+      - db-data:/data
+    restart: unless-stopped
+
+volumes:
+  db-data:

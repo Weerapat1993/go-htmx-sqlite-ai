@@ -22,10 +22,11 @@ tmp_dir = "tmp"
   poll_interval = 500
   post_cmd = [
     # https://github.com/cosmtrek/air/issues/534
-    "lsof -i :8080 -sTCP:LISTEN | sed 1d | awk '{print $2}' | xargs kill -9",
+    # `|| true` guards GNU xargs (Linux), which runs the command once even on empty input
+    "lsof -i :8080 -sTCP:LISTEN | sed 1d | awk '{print $2}' | xargs kill -9 || true",
   ]
   pre_cmd = [
-    "lsof -i :8080 -sTCP:LISTEN | sed 1d | awk '{print $2}' | xargs kill -9",
+    "lsof -i :8080 -sTCP:LISTEN | sed 1d | awk '{print $2}' | xargs kill -9 || true",
     "go tool templ generate -path ./internal/components",
     "go tool go-tw -i ./styles/input.css -o ./internal/dist/assets/css/output@dev.css",
     "go tool sqlc generate",

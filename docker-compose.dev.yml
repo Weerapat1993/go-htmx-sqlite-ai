@@ -1,0 +1,21 @@
+services:
+  app:
+    image: golang:1.26
+    working_dir: /app
+    volumes:
+      - .:/app
+      - go-mod-cache:/go/pkg/mod
+      - db-data:/data
+    ports:
+      - "3500:8080"
+    environment:
+      PORT: 8080
+      DB_URL: /data/db.sqlite3
+      LOG_LEVEL: debug
+    command: >
+      sh -c "apt-get update && apt-get install -y --no-install-recommends lsof &&
+             go install github.com/air-verse/air@latest && air"
+
+volumes:
+  go-mod-cache:
+  db-data:

@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db/queries"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db/queries"
 )
 
 type Database interface {

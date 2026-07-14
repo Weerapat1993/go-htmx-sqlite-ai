@@ -64,3 +64,6 @@ Temporary Items
 /internal/db/queries/*.go
 goreleaser-dist
 *.sqlite3*
+
+# Serena
+.serena/

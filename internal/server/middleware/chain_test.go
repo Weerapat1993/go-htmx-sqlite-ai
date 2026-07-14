@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/middleware"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/middleware"
 )
 
 func TestChain_Empty(t *testing.T) {

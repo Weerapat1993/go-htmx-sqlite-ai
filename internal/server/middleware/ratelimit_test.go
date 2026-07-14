@@ -8,7 +8,7 @@ import (
 	"sync"
 	"testing"
 
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/middleware"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/middleware"
 )
 
 func newHandler(t *testing.T, rpm, maxEntries int) http.Handler {

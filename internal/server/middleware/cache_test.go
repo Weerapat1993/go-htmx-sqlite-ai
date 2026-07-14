@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/middleware"
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/version"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/middleware"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/version"
 )
 
 //nolint:paralleltest // mutates package-level version.Value; parallelism would cause a data race

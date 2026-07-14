@@ -3,7 +3,7 @@ package handler
 import (
 	"context"
 	"github.com/a-h/templ"
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db"
 	"log/slog"
 	"net/http"
 )

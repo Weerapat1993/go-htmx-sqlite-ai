@@ -1,4 +1,4 @@
-module https://github.com/Weerapat1993/go-htmx-sqlite-ai
+module github.com/Weerapat1993/go-htmx-sqlite-ai
 
 go 1.26.3
 

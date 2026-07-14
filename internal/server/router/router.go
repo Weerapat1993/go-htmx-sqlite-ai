@@ -5,11 +5,11 @@ import (
 	"log/slog"
 	"net/http"
 
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db"
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/dist"
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/handler"
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/middleware"
-	"https://github.com/Weerapat1993/go-htmx-sqlite-ai/internal/version"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/dist"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/handler"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/middleware"
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/version"
 )
 
 // New creates a new router with the given context, logger, database, and rate limit.

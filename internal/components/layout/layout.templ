@@ -1,0 +1,59 @@
+package layout
+
+// Shell wraps page content with the shared nav and footer.
+templ Shell(active string, content templ.Component) {
+	<div class="flex flex-col min-h-screen bg-paper text-ink font-sans">
+		@Nav(active)
+		<div class="grow">
+			@content
+		</div>
+		@Footer()
+	</div>
+}
+
+templ Nav(active string) {
+	<header class="border-b border-line">
+		<div class="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between font-mono text-sm">
+			<a href="/" class="flex items-center gap-2 font-semibold">
+				<span class="text-gopher">&gt;_</span> go-htmx-sqlite-ai
+			</a>
+			<nav aria-label="Primary" class="flex items-center gap-6">
+				@navLink("/", "Home", active == "home")
+				@navLink("/about", "About", active == "about")
+				<a
+					href="https://github.com/Weerapat1993/go-htmx-sqlite-ai"
+					class="rounded border border-line px-3 py-1.5 hover:border-gopher hover:text-gopher transition-colors"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					GitHub ↗
+				</a>
+			</nav>
+		</div>
+	</header>
+}
+
+templ navLink(href, label string, isActive bool) {
+	if isActive {
+		<a href={ templ.URL(href) } aria-current="page" class="font-semibold border-b-2 border-gopher">{ label }</a>
+	} else {
+		<a href={ templ.URL(href) } class="text-ink/70 hover:text-ink transition-colors">{ label }</a>
+	}
+}
+
+templ Footer() {
+	<footer class="border-t border-line">
+		<div class="mx-auto max-w-5xl px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-ink/70">
+			<span>&gt;_ go-htmx-sqlite-ai</span>
+			<span>Built with Go, HTMX and SQLite.</span>
+			<a
+				href="https://github.com/Weerapat1993/go-htmx-sqlite-ai"
+				class="hover:text-gopher transition-colors"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				GitHub ↗
+			</a>
+		</div>
+	</footer>
+}

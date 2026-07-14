@@ -1,0 +1,73 @@
+package about
+
+templ Page() {
+	@intro()
+	@requestFlow()
+	@securityBand()
+}
+
+templ intro() {
+	<section class="mx-auto max-w-3xl px-6 py-16 md:py-24">
+		<p class="font-mono text-sm text-ink/70">$ cat ABOUT.md</p>
+		<h1 class="font-mono text-4xl md:text-5xl font-bold tracking-tight mt-4">Why this stack</h1>
+		<div class="mt-8 space-y-5 text-ink/80 leading-relaxed">
+			<p>
+				Most starters hand you a JavaScript build pipeline before you've written a
+				single handler. This one doesn't. Go renders the page; HTMX swaps the parts
+				that change. SQLite is the database, and it never leaves the machine.
+			</p>
+			<p>
+				templ compiles views to Go functions, so a typo is a compile error, not a
+				runtime surprise. sqlc does the same for SQL — write
+				<code class="font-mono text-sm bg-ink/5 rounded px-1.5 py-0.5">query.sql</code>,
+				get typed Go back.
+			</p>
+			<p>Nothing here is exotic. It's the boring stack that ships.</p>
+		</div>
+	</section>
+}
+
+templ requestFlow() {
+	<section class="border-t border-line">
+		<div class="mx-auto max-w-3xl px-6 py-16 md:py-24">
+			<h2 class="font-mono text-xs uppercase tracking-wider text-ink/70 mb-8">How a request flows</h2>
+			<ol class="space-y-6">
+				@flowStep("01", "cmd/server/main.go", "Reads env vars, opens the database, builds the router.")
+				@flowStep("02", "router.go", "Registers routes on a stdlib http.ServeMux.")
+				@flowStep("03", "middleware chain", "Recovery → Logging → Security → RateLimit → CSRF.")
+				@flowStep("04", "handler", "Renders a templ component straight to the response.")
+			</ol>
+		</div>
+	</section>
+}
+
+templ flowStep(n, title, body string) {
+	<li class="flex gap-4 font-mono">
+		<span class="text-ink/70 text-sm pt-0.5" aria-hidden="true">{ n }</span>
+		<div>
+			<p class="font-semibold">{ title }</p>
+			<p class="text-sm text-ink/70 mt-1 leading-relaxed">{ body }</p>
+		</div>
+	</li>
+}
+
+templ securityBand() {
+	<section class="border-t border-line bg-ink text-paper">
+		<div class="mx-auto max-w-3xl px-6 py-16">
+			<h2 class="font-mono text-xs uppercase tracking-wider text-paper/70 mb-8">Security by default</h2>
+			<div class="grid sm:grid-cols-2 gap-6 font-mono text-sm">
+				@secItem("CSRF", "Native Go 1.25 http.CrossOriginProtection. No tokens to wire up.")
+				@secItem("Rate limiting", "Per-IP token bucket, 50 req/min by default.")
+				@secItem("Security headers", "CSP, HSTS, X-Frame-Options, and friends.")
+				@secItem("Hardened timeouts", "ReadHeaderTimeout and IdleTimeout guard against slowloris.")
+			</div>
+		</div>
+	</section>
+}
+
+templ secItem(title, body string) {
+	<div>
+		<p class="font-semibold text-gopher">{ title }</p>
+		<p class="text-paper/70 mt-1 leading-relaxed">{ body }</p>
+	</div>
+}

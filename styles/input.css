@@ -2,6 +2,30 @@
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
 
+/* Terminal-flavored theme: Go blue accent, warm paper surface, mono display type. */
+@theme {
+  --color-paper: #f3f4ef;
+  --color-ink: #12171a;
+  --color-gopher: #00add8;
+  --color-amber: #c98a2b;
+  --color-moss: #3f7d5c;
+  --color-line: #dad6c8;
+
+  --font-sans: ui-sans-serif, -apple-system, "Inter", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-paper: #101513;
+    --color-ink: #ede9df;
+    --color-gopher: #35c4e8;
+    --color-amber: #e0a44b;
+    --color-moss: #59b98a;
+    --color-line: #263029;
+  }
+}
+
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
@@ -17,5 +41,78 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
+  }
+
+  body {
+    font-family: var(--font-sans);
+  }
+}
+
+/* Hero terminal boot-log: CSS-only typewriter, skipped under reduced motion. */
+@layer utilities {
+  .term-line {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .term-caret {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .term-line {
+      width: 0;
+      animation: term-type 0.5s steps(28, end) forwards;
+    }
+
+    .term-line:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .term-line:nth-child(2) {
+      animation-delay: 0.7s;
+    }
+
+    .term-line:nth-child(3) {
+      animation-delay: 1.3s;
+    }
+
+    .term-line:nth-child(4) {
+      animation-delay: 1.9s;
+    }
+
+    .term-line:nth-child(5) {
+      animation-delay: 2.5s;
+    }
+
+    .term-line:nth-child(6) {
+      animation-delay: 3.1s;
+    }
+
+    .term-caret {
+      animation: term-blink 1s step-end infinite;
+      animation-delay: 3.6s;
+    }
+  }
+}
+
+@keyframes term-type {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes term-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
   }
 }

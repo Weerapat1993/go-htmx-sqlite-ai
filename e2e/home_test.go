@@ -17,7 +17,7 @@ func TestHome(t *testing.T) {
 	_, err := page.Goto(getFullPath(""))
 	require.NoError(t, err)
 
-	require.NoError(t, expect.Locator(page.GetByText("Welcome!")).ToBeVisible())
+	require.NoError(t, expect.Locator(page.GetByText("Just Go.")).ToBeVisible())
 }
 
 // TestHome_GreetButton verifies the Greet button fires an alert under the app's

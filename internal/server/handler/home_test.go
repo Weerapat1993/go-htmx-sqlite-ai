@@ -43,7 +43,7 @@ func TestHome_ContentType(t *testing.T) {
 	assert.Contains(t, rec.Header().Get("Content-Type"), "text/html")
 }
 
-func TestHome_ContainsWelcomeText(t *testing.T) {
+func TestHome_ContainsHeadline(t *testing.T) {
 	t.Parallel()
 
 	h := newHomeHandler()
@@ -52,7 +52,7 @@ func TestHome_ContainsWelcomeText(t *testing.T) {
 
 	h.Home(rec, req)
 
-	assert.Contains(t, rec.Body.String(), "Welcome!")
+	assert.Contains(t, rec.Body.String(), "Just Go.")
 }
 
 func TestCount_StatusCode(t *testing.T) {

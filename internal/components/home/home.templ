@@ -3,17 +3,136 @@ package home
 import "strconv"
 
 templ Page(count int) {
-	<div class="text-center">
-		<h1 class="text-5xl font-bold">Welcome!</h1>
-		<p class="text-indigo-200 mt-4">This is a simple home screen.</p>
-		@Counter(count)
-		@GreetButton()
+	@hero()
+	@stackStrip()
+	@features(count)
+	@ctaBand()
+}
+
+templ hero() {
+	<section class="mx-auto max-w-5xl px-6 py-16 md:py-24 grid md:grid-cols-2 gap-12 items-center">
+		<div>
+			<p class="font-mono text-sm text-ink/70">$ go run ./cmd/server</p>
+			<h1 class="font-mono text-4xl md:text-5xl font-bold tracking-tight mt-4 leading-tight">
+				No JS build step.<br/>
+				Just Go.
+			</h1>
+			<p class="mt-6 text-ink/80 leading-relaxed max-w-md">
+				Go, HTMX, SQLite and templ, wired together with sqlc, Tailwind and Air —
+				so you write handlers, not boilerplate.
+			</p>
+			<div class="mt-8 flex flex-wrap gap-3 font-mono text-sm">
+				<a
+					href="https://github.com/Weerapat1993/go-htmx-sqlite-ai"
+					class="rounded bg-ink text-paper px-4 py-2.5 hover:bg-gopher transition-colors"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					View on GitHub
+				</a>
+				<a href="/about" class="rounded border border-line px-4 py-2.5 hover:border-gopher hover:text-gopher transition-colors">
+					Read the about →
+				</a>
+			</div>
+		</div>
+		@terminal()
+	</section>
+}
+
+templ terminal() {
+	<div
+		class="rounded-lg border border-line bg-ink text-paper font-mono text-sm p-5 shadow-sm"
+		role="img"
+		aria-label="Terminal showing the dev boot sequence: air, templ generate, sqlc generate, tailwindcss build, migrate.sh, then listening on port 8080"
+	>
+		<div class="flex gap-1.5 mb-4" aria-hidden="true">
+			<span class="size-2.5 rounded-full bg-paper/20"></span>
+			<span class="size-2.5 rounded-full bg-paper/20"></span>
+			<span class="size-2.5 rounded-full bg-paper/20"></span>
+		</div>
+		<div aria-hidden="true">
+			<p class="term-line text-moss">$ air</p>
+			<p class="term-line text-paper/70">&gt; templ generate</p>
+			<p class="term-line text-paper/70">&gt; sqlc generate</p>
+			<p class="term-line text-paper/70">&gt; tailwindcss build</p>
+			<p class="term-line text-paper/70">&gt; migrate.sh -p sqlite</p>
+			<p class="term-line text-gopher">✓ listening on :8080<span class="term-caret">▌</span></p>
+		</div>
 	</div>
 }
 
+templ stackStrip() {
+	<section class="border-y border-line">
+		<div class="mx-auto max-w-5xl px-6 py-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 font-mono text-xs uppercase tracking-wider text-ink/70">
+			<span>Go</span>
+			<span>HTMX</span>
+			<span>SQLite</span>
+			<span>templ</span>
+			<span>sqlc</span>
+			<span>Tailwind</span>
+			<span>Air</span>
+		</div>
+	</section>
+}
+
+templ features(count int) {
+	<section class="mx-auto max-w-5xl px-6 py-16 md:py-24">
+		<h2 class="font-mono text-xs uppercase tracking-wider text-ink/70 mb-8">What's wired up</h2>
+		<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+			@featureCard("$", "Live reload", "Air watches every change — templ, sqlc and Tailwind regenerate before the page reloads.")
+			@featureCard("#", "Type-safe SQL", "sqlc generates Go types straight from query.sql. No ORM, no runtime surprises.")
+			@featureCard(">", "HTML over HTMX", "templ renders server-side; HTMX swaps fragments in place. No client framework.")
+			@featureCard("~", "CSRF, built in", "Go 1.25's native http.CrossOriginProtection. No tokens to wire up.")
+			@featureCard("%", "Rate limited", "Per-IP token-bucket limiting, in-memory and self-cleaning.")
+			@tryItCard(count)
+		</div>
+	</section>
+}
+
+templ featureCard(glyph, title, body string) {
+	<div class="rounded-lg border border-line p-6 hover:border-gopher/50 transition-colors">
+		<span class="font-mono text-gopher text-lg" aria-hidden="true">{ glyph }</span>
+		<h3 class="font-mono font-semibold mt-3">{ title }</h3>
+		<p class="text-sm text-ink/70 mt-2 leading-relaxed">{ body }</p>
+	</div>
+}
+
+templ tryItCard(count int) {
+	<div class="rounded-lg border border-line p-6 bg-ink text-paper">
+		<span class="font-mono text-moss text-lg" aria-hidden="true">*</span>
+		<h3 class="font-mono font-semibold mt-3">Try it live</h3>
+		<p class="text-sm text-paper/70 mt-2 leading-relaxed">
+			No full reload — HTMX swaps this fragment back in place.
+		</p>
+		@Counter(count)
+		<div class="mt-3">
+			@GreetButton()
+		</div>
+	</div>
+}
+
+templ ctaBand() {
+	<section class="border-t border-line bg-ink text-paper">
+		<div class="mx-auto max-w-5xl px-6 py-16 text-center">
+			<h2 class="font-mono text-2xl md:text-3xl font-bold">Clone it, run air, ship.</h2>
+			<p class="mt-4 font-mono text-sm text-paper/70">$ git clone https://github.com/Weerapat1993/go-htmx-sqlite-ai</p>
+			<a
+				href="https://github.com/Weerapat1993/go-htmx-sqlite-ai"
+				class="inline-block mt-6 rounded bg-gopher text-ink font-mono text-sm px-5 py-2.5 font-semibold hover:bg-paper transition-colors"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				View on GitHub
+			</a>
+		</div>
+	</section>
+}
+
 templ GreetButton() {
-	<button id="greet-button"
-		class="px-4 py-2 bg-emerald-500 text-white rounded hover:bg-emerald-600">
+	<button
+		id="greet-button"
+		class="rounded border border-paper/30 px-3 py-1 font-mono text-sm hover:border-moss hover:text-moss transition-colors"
+	>
 		Greet
 	</button>
 	<script nonce={ templ.GetNonce(ctx) }>
@@ -24,10 +143,14 @@ templ GreetButton() {
 }
 
 templ Counter(count int) {
-	<div id="counter" class="mt-8">
-		<p class="text-2xl mb-4">Count: { strconv.Itoa(count) }</p>
-		<button hx-post="/count" hx-target="#counter" hx-swap="outerHTML"
-			class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600">
+	<div id="counter" class="mt-4 font-mono text-sm flex items-center gap-3">
+		<p>Count: { strconv.Itoa(count) }</p>
+		<button
+			hx-post="/count"
+			hx-target="#counter"
+			hx-swap="outerHTML"
+			class="rounded border border-paper/30 px-3 py-1 hover:border-gopher hover:text-gopher transition-colors"
+		>
 			Increment
 		</button>
 	</div>

@@ -2,6 +2,8 @@
 
 Fork of [Piszmog/go-htmx-template](https://github.com/Piszmog/go-htmx-template) — a Web Application built with Go (`templ`), HTMX, a SQL DB (`sqlc`), E2E testing (Playwright), and styling (Tailwind CSS).
 
+**Live demo:** https://go-htmx-sqlite-ai-production.up.railway.app/
+
 ## Installation
 
 **Prerequisites**

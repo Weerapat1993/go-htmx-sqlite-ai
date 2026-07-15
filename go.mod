@@ -4,8 +4,10 @@ go 1.26.5
 
 require (
 	github.com/a-h/templ v0.3.1020
+	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/mxschmitt/playwright-go v0.6100.0
 	github.com/stretchr/testify v1.11.1
+	github.com/tursodatabase/libsql-client-go v0.0.0-20260528064733-9d5d30a29a60
 	golang.org/x/time v0.15.0
 	modernc.org/sqlite v1.51.0
 )
@@ -23,6 +25,7 @@ require (
 	github.com/bep/golibsass v1.2.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cli/browser v1.3.0 // indirect
+	github.com/coder/websocket v1.8.12 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/cubicdaiya/gonp v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
@@ -36,7 +39,6 @@ require (
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gohugoio/hugo v0.149.1 // indirect
-	github.com/golang-migrate/migrate/v4 v4.19.1 // indirect
 	github.com/google/cel-go v0.29.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

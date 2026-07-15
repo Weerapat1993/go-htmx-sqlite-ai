@@ -6,6 +6,7 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"os"
@@ -14,8 +15,9 @@ import (
 	"syscall"
 
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/sqlite"
+	"github.com/golang-migrate/migrate/v4/database/sqlite"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 func main() {
@@ -24,22 +26,20 @@ func main() {
 		dbURL = "./db.sqlite3"
 	}
 
-	// golang-migrate's sqlite:// DSN parses the segment after "//" as the URL
-	// host, so a relative path like "./db.sqlite3" is misread and the driver
-	// returns SQLITE_CANTOPEN (error 14). Resolve to an absolute path first,
-	// mirroring the workaround already documented in migrate.sh.
-	dbURL = strings.TrimPrefix(dbURL, "file:")
-	absDBPath, err := filepath.Abs(dbURL)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "entrypoint: resolve db path:", err)
-		os.Exit(1)
+	var (
+		m   *migrate.Migrate
+		err error
+	)
+	if strings.HasPrefix(dbURL, "libsql://") {
+		m, err = newRemoteMigrator(dbURL, os.Getenv("TURSO_AUTH_TOKEN"))
+	} else {
+		m, err = newLocalMigrator(dbURL)
 	}
-
-	m, err := migrate.New("file:///migrations", "sqlite://"+absDBPath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "entrypoint: migrate init:", err)
 		os.Exit(1)
 	}
+
 	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		fmt.Fprintln(os.Stderr, "entrypoint: migrate up:", err)
 		os.Exit(1)
@@ -50,4 +50,40 @@ func main() {
 		fmt.Fprintln(os.Stderr, "entrypoint: exec server:", err)
 		os.Exit(1)
 	}
+}
+
+func newLocalMigrator(dbURL string) (*migrate.Migrate, error) {
+	// golang-migrate's sqlite:// DSN parses the segment after "//" as the URL
+	// host, so a relative path like "./db.sqlite3" is misread and the driver
+	// returns SQLITE_CANTOPEN (error 14). Resolve to an absolute path first,
+	// mirroring the workaround already documented in migrate.sh.
+	path := strings.TrimPrefix(dbURL, "file:")
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		return nil, fmt.Errorf("resolve db path: %w", err)
+	}
+	return migrate.New("file:///migrations", "sqlite://"+absPath)
+}
+
+func newRemoteMigrator(dbURL, authToken string) (*migrate.Migrate, error) {
+	dsn := dbURL
+	if authToken != "" {
+		sep := "?"
+		if strings.Contains(dbURL, "?") {
+			sep = "&"
+		}
+		dsn += sep + "authToken=" + authToken
+	}
+	db, err := sql.Open("libsql", dsn)
+	if err != nil {
+		return nil, fmt.Errorf("opening database: %w", err)
+	}
+	// libsql speaks the SQLite wire protocol/dialect, so golang-migrate's
+	// sqlite driver works against it directly via an existing *sql.DB —
+	// there is no dedicated "libsql" scheme registered with golang-migrate.
+	driver, err := sqlite.WithInstance(db, &sqlite.Config{})
+	if err != nil {
+		return nil, fmt.Errorf("libsql migrate driver: %w", err)
+	}
+	return migrate.NewWithDatabaseInstance("file:///migrations", "libsql", driver)
 }

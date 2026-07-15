@@ -4,9 +4,12 @@ services:
     working_dir: /app
     volumes:
       - .:/app:ro
-      - db-data:/data
-    entrypoint: ["/app/migrate.sh"]
-    command: ["-p", "sqlite", "-u", "/data/db.sqlite3"]
+    entrypoint: ["sh", "-c"]
+    command:
+      - '/app/migrate.sh -p libsql -u "$${DB_URL#libsql://}" -t "$$TURSO_AUTH_TOKEN"'
+    environment:
+      DB_URL: ${DB_URL}
+      TURSO_AUTH_TOKEN: ${TURSO_AUTH_TOKEN}
 
   app:
     build:
@@ -22,11 +25,7 @@ services:
       PORT: 8080
       LOG_LEVEL: info
       LOG_OUTPUT: text
-      DB_URL: /data/db.sqlite3
+      DB_URL: ${DB_URL}
+      TURSO_AUTH_TOKEN: ${TURSO_AUTH_TOKEN}
       RATE_LIMIT: 50
-    volumes:
-      - db-data:/data
     restart: unless-stopped
-
-volumes:
-  db-data:

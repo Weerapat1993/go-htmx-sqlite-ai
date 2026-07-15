@@ -5,12 +5,12 @@ services:
     volumes:
       - .:/app
       - go-mod-cache:/go/pkg/mod
-      - db-data:/data
     ports:
       - "3500:8080"
     environment:
       PORT: 8080
-      DB_URL: /data/db.sqlite3
+      DB_URL: ${DB_URL}
+      TURSO_AUTH_TOKEN: ${TURSO_AUTH_TOKEN}
       LOG_LEVEL: debug
     command: >
       sh -c "apt-get update && apt-get install -y --no-install-recommends lsof &&
@@ -18,4 +18,3 @@ services:
 
 volumes:
   go-mod-cache:
-  db-data:

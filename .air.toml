@@ -30,7 +30,7 @@ tmp_dir = "tmp"
     "go tool templ generate -path ./internal/components",
     "go tool go-tw -version v4.3.2 -i ./styles/input.css -o ./internal/dist/assets/css/output@dev.css",
     "go tool sqlc generate",
-    "./migrate.sh -p sqlite -u \"${DB_URL:-./db.sqlite3}\"",
+    "sh -c 'if [ \"${DB_URL#libsql://}\" != \"$DB_URL\" ]; then ./migrate.sh -p libsql -u \"${DB_URL#libsql://}\" -t \"$TURSO_AUTH_TOKEN\"; else ./migrate.sh -p sqlite -u \"${DB_URL:-./db.sqlite3}\"; fi'",
   ]
   rerun = true
   rerun_delay = 500

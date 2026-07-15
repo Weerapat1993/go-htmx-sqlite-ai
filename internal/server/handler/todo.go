@@ -23,7 +23,7 @@ func (h *Handler) TodoList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	page := layout.Shell("todo-list-db", todo.Page(todos))
-	h.html(r.Context(), w, http.StatusOK, core.HTML("go-htmx-sqlite-ai — Task queue", page))
+	h.html(r.Context(), w, core.HTML("go-htmx-sqlite-ai — Task queue", page))
 }
 
 // TodoCreate creates a todo and returns the refreshed list fragment.
@@ -64,7 +64,7 @@ func (h *Handler) TodoEdit(w http.ResponseWriter, r *http.Request) {
 		h.handleGetTodoError(w, err)
 		return
 	}
-	h.html(r.Context(), w, http.StatusOK, todo.EditRow(t))
+	h.html(r.Context(), w, todo.EditRow(t))
 }
 
 // TodoGet returns the display row for a todo; used to cancel an in-progress edit.
@@ -78,7 +78,7 @@ func (h *Handler) TodoGet(w http.ResponseWriter, r *http.Request) {
 		h.handleGetTodoError(w, err)
 		return
 	}
-	h.html(r.Context(), w, http.StatusOK, todo.Row(t))
+	h.html(r.Context(), w, todo.Row(t))
 }
 
 // TodoUpdate saves an edited title and returns the refreshed list fragment.
@@ -121,7 +121,7 @@ func (h *Handler) renderTodoList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	h.html(r.Context(), w, http.StatusOK, todo.List(todos))
+	h.html(r.Context(), w, todo.List(todos))
 }
 
 func (h *Handler) handleGetTodoError(w http.ResponseWriter, err error) {

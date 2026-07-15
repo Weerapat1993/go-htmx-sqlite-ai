@@ -45,6 +45,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// #nosec G204 -- path and args are hardcoded literals, not user input.
 	if err := syscall.Exec("/my-app", []string{"/my-app"}, os.Environ()); err != nil {
 		fmt.Fprintln(os.Stderr, "entrypoint: exec server:", err)
 		os.Exit(1)

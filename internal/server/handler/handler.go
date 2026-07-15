@@ -19,9 +19,9 @@ func New(logger *slog.Logger, database db.Database) *Handler {
 	return &Handler{logger: logger, database: database}
 }
 
-func (h *Handler) html(ctx context.Context, w http.ResponseWriter, status int, t templ.Component) {
+func (h *Handler) html(ctx context.Context, w http.ResponseWriter, t templ.Component) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(status)
+	w.WriteHeader(http.StatusOK)
 
 	// Use WithoutCancel so a client disconnect doesn't truncate a partially-written response.
 	if err := t.Render(context.WithoutCancel(ctx), w); err != nil {

@@ -62,7 +62,11 @@ func newLocalMigrator(dbURL string) (*migrate.Migrate, error) {
 	if err != nil {
 		return nil, fmt.Errorf("resolve db path: %w", err)
 	}
-	return migrate.New("file:///migrations", "sqlite://"+absPath)
+	m, err := migrate.New("file:///migrations", "sqlite://"+absPath)
+	if err != nil {
+		return nil, fmt.Errorf("new migrator: %w", err)
+	}
+	return m, nil
 }
 
 func newRemoteMigrator(dbURL, authToken string) (*migrate.Migrate, error) {
@@ -85,5 +89,9 @@ func newRemoteMigrator(dbURL, authToken string) (*migrate.Migrate, error) {
 	if err != nil {
 		return nil, fmt.Errorf("libsql migrate driver: %w", err)
 	}
-	return migrate.NewWithDatabaseInstance("file:///migrations", "libsql", driver)
+	m, err := migrate.NewWithDatabaseInstance("file:///migrations", "libsql", driver)
+	if err != nil {
+		return nil, fmt.Errorf("new migrator with database instance: %w", err)
+	}
+	return m, nil
 }

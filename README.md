@@ -182,3 +182,27 @@ The repository comes with two GitHub workflows: `ci.yml` lints and tests the cod
 
 See `AGENTS.md` for the full project structure and code-style conventions.
 
+## Deploy Railway
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/KnYa4C?referralCode=HtBp41&utm_medium=integration&utm_source=template&utm_campaign=generic)
+
+> **Note:** the one-click template above may predate the migration entrypoint / volume / env vars described below — if the deploy comes up without a `/data` volume or `DB_URL` set, follow Manual setup instead.
+
+### Manual setup
+
+1. **New Project → Deploy from GitHub repo**, select this repo. Railway auto-detects the root `Dockerfile` — no Buildpack/Nixpacks config needed.
+2. **Root Directory**: leave blank/default. `Dockerfile` is at the repo root, not a subfolder.
+3. **Custom Start Command**: leave blank. The deploy image is `gcr.io/distroless/static-debian13` (no shell), so a start command that Railway would normally run via `/bin/sh -c` will crash the container. The `Dockerfile`'s `CMD ["/entrypoint"]` handles startup — it applies pending DB migrations, then execs into the server binary.
+4. **Volumes**: add one, mounted at `/data`. Without it, the SQLite file is lost on every redeploy/restart.
+5. **Variables**:
+   ```
+   DB_URL=/data/db.sqlite3
+   LOG_LEVEL=info
+   LOG_OUTPUT=json
+   RATE_LIMIT=50
+   ```
+   Do not set `PORT` — Railway injects it and the app already reads it.
+6. **Build Args** (optional but recommended): set `VERSION` to a git SHA or release tag. `internal/version.Value` is compared against `"dev"` to decide whether the router trusts proxy headers for client IP — Railway sits behind a proxy, so this should not be left as `dev` in production.
+
+### Limits
+
+SQLite uses a file lock — run a single replica, no horizontal scaling. For multi-replica deploys, swap to Postgres or Turso/libsql (`migrate.sh` already supports the `libsql` protocol).

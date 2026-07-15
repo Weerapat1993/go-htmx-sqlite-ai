@@ -28,6 +28,13 @@ func New(ctx context.Context, logger *slog.Logger, database db.Database, rateLim
 	mux.HandleFunc(newPath(http.MethodGet, "/{$}"), h.Home)
 	mux.HandleFunc(newPath(http.MethodGet, "/about"), h.About)
 	mux.HandleFunc(newPath(http.MethodPost, "/count"), h.Count)
+	mux.HandleFunc(newPath(http.MethodGet, "/todo-list-db"), h.TodoList)
+	mux.HandleFunc(newPath(http.MethodPost, "/todos"), h.TodoCreate)
+	mux.HandleFunc(newPath(http.MethodGet, "/todos/{id}"), h.TodoGet)
+	mux.HandleFunc(newPath(http.MethodPut, "/todos/{id}"), h.TodoUpdate)
+	mux.HandleFunc(newPath(http.MethodDelete, "/todos/{id}"), h.TodoDelete)
+	mux.HandleFunc(newPath(http.MethodGet, "/todos/{id}/edit"), h.TodoEdit)
+	mux.HandleFunc(newPath(http.MethodPost, "/todos/{id}/toggle"), h.TodoToggle)
 
 	// Middleware chain
 	hdlr := http.Handler(mux)

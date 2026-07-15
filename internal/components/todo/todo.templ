@@ -1,0 +1,158 @@
+package todo
+
+import (
+	"strconv"
+
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db/queries"
+)
+
+templ Page(todos []queries.Todo) {
+	<section class="mx-auto max-w-2xl px-6 py-16 md:py-24">
+		<p class="font-mono text-sm text-ink/70">$ sqlite3 db.sqlite3 'select * from todos'</p>
+		<h1 class="font-mono text-3xl md:text-4xl font-bold tracking-tight mt-4 leading-tight">
+			Task queue
+		</h1>
+		<p class="mt-4 text-ink/80 leading-relaxed max-w-md">
+			Every add, toggle, edit and delete round-trips to SQLite over HTMX. No client state.
+		</p>
+	</section>
+	<section class="mx-auto max-w-2xl px-6 pb-24">
+		<div class="rounded-lg border border-line bg-ink text-paper font-mono text-sm shadow-sm overflow-hidden">
+			<div class="flex gap-1.5 px-5 py-4" aria-hidden="true">
+				<span class="size-2.5 rounded-full bg-paper/20"></span>
+				<span class="size-2.5 rounded-full bg-paper/20"></span>
+				<span class="size-2.5 rounded-full bg-paper/20"></span>
+			</div>
+			@List(todos)
+			@addForm()
+		</div>
+	</section>
+}
+
+// List renders the todo-list fragment, returned whole after any mutation
+// (create, toggle, delete, save) so ordering and the empty state stay correct.
+templ List(todos []queries.Todo) {
+	<ul id="todo-list">
+		if len(todos) == 0 {
+			@emptyRow()
+		}
+		for _, t := range todos {
+			@Row(t)
+		}
+	</ul>
+}
+
+templ emptyRow() {
+	<li class="px-5 py-8 text-center text-paper/40 border-t border-paper/10">No tasks queued. Add one below.</li>
+}
+
+// Row renders a single display row; used standalone when cancelling an edit.
+templ Row(t queries.Todo) {
+	<li id={ rowID(t.ID) } class="group flex items-center gap-3 px-5 py-2.5 border-t border-paper/10">
+		<button
+			hx-post={ todoPath(t.ID) + "/toggle" }
+			hx-target="#todo-list"
+			hx-swap="outerHTML"
+			aria-pressed={ strconv.FormatBool(t.Done) }
+			aria-label="Toggle done"
+			class={ toggleClass(t.Done) }
+		>
+			if t.Done {
+				[x]
+			} else {
+				[ ]
+			}
+		</button>
+		<span class={ "flex-1 truncate", templ.KV("line-through text-paper/40", t.Done) }>{ t.Title }</span>
+		<span class="hidden group-hover:flex items-center gap-3 text-paper/40 shrink-0">
+			<button
+				hx-get={ todoPath(t.ID) + "/edit" }
+				hx-target={ "#" + rowID(t.ID) }
+				hx-swap="outerHTML"
+				class="hover:text-gopher transition-colors"
+				aria-label="Edit task"
+			>
+				~
+			</button>
+			<button
+				hx-delete={ todoPath(t.ID) }
+				hx-target="#todo-list"
+				hx-swap="outerHTML"
+				hx-confirm="Delete this task?"
+				class="hover:text-amber transition-colors"
+				aria-label="Delete task"
+			>
+				x
+			</button>
+		</span>
+	</li>
+}
+
+// EditRow renders the inline-edit form for a single row.
+templ EditRow(t queries.Todo) {
+	<li id={ rowID(t.ID) } class="flex items-center gap-3 px-5 py-2 border-t border-paper/10">
+		<form
+			hx-put={ todoPath(t.ID) }
+			hx-target="#todo-list"
+			hx-swap="outerHTML"
+			class="flex flex-1 items-center gap-3"
+		>
+			<span class="text-gopher shrink-0">~</span>
+			<input
+				type="text"
+				name="title"
+				value={ t.Title }
+				required
+				maxlength="200"
+				autofocus
+				class="flex-1 bg-transparent border-b border-gopher outline-none py-0.5"
+			/>
+			<button type="submit" class="text-moss hover:text-moss/80 transition-colors shrink-0">save</button>
+			<button
+				type="button"
+				hx-get={ todoPath(t.ID) }
+				hx-target={ "#" + rowID(t.ID) }
+				hx-swap="outerHTML"
+				class="text-paper/40 hover:text-paper transition-colors shrink-0"
+			>
+				cancel
+			</button>
+		</form>
+	</li>
+}
+
+templ addForm() {
+	<form
+		hx-post="/todos"
+		hx-target="#todo-list"
+		hx-swap="outerHTML"
+		hx-on::after-request="if(event.detail.successful) this.reset()"
+		class="flex items-center gap-3 px-5 py-3 border-t border-line/20"
+	>
+		<span class="text-gopher shrink-0">$</span>
+		<input
+			type="text"
+			name="title"
+			placeholder="add a task, press enter"
+			required
+			maxlength="200"
+			class="flex-1 bg-transparent outline-none placeholder:text-paper/30"
+		/>
+		<button type="submit" class="text-paper/40 hover:text-gopher transition-colors shrink-0" aria-label="Add task">+</button>
+	</form>
+}
+
+func toggleClass(done bool) string {
+	if done {
+		return "shrink-0 text-moss"
+	}
+	return "shrink-0 text-paper/50 hover:text-gopher transition-colors"
+}
+
+func rowID(id int64) string {
+	return "todo-" + strconv.FormatInt(id, 10)
+}
+
+func todoPath(id int64) string {
+	return "/todos/" + strconv.FormatInt(id, 10)
+}

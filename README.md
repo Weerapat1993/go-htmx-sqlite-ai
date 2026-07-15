@@ -43,6 +43,12 @@ If running the binary directly (not via `air`), run migrations first:
 ./migrate.sh -p sqlite -u ./db.sqlite3
 ```
 
+**Run Dev on air**
+```shell
+air
+```
+When the application is running, go to http://localhost:8080/
+
 **Run on Docker Compose**
 ```shell
 docker compose -f docker-compose.dev.yml up -d

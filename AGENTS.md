@@ -36,7 +36,7 @@ This file contains comprehensive guidelines for AI coding agents working in this
 - **Generate all**: `go tool templ generate -path ./internal/components && go tool sqlc generate`
 - **Templ only**: `go tool templ generate -path ./internal/components`
 - **SQLC only**: `go tool sqlc generate`
-- **Tailwind CSS**: `go tool go-tw -i ./styles/input.css -o ./internal/dist/assets/css/output@dev.css`
+- **Tailwind CSS**: `go tool go-tw -version v4.3.2 -i ./styles/input.css -o ./internal/dist/assets/css/output@dev.css`
 
 ### Database Migrations
 - **Create migration**: `go run github.com/golang-migrate/migrate/v4/cmd/migrate@v4.19.1 create -ext sql -dir internal/db/migrations <name>`

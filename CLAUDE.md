@@ -25,7 +25,7 @@ go tool sqlc vet                                              # SQL lint
 govulncheck ./...
 
 go tool templ generate -path ./internal/components && go tool sqlc generate   # codegen (both)
-go tool go-tw -i ./styles/input.css -o ./internal/dist/assets/css/output@dev.css  # tailwind
+go tool go-tw -version v4.3.2 -i ./styles/input.css -o ./internal/dist/assets/css/output@dev.css  # tailwind
 
 ./migrate.sh -p sqlite -u ./db.sqlite3                        # apply DB migrations (server does NOT migrate on startup)
 ```

@@ -67,3 +67,7 @@ goreleaser-dist
 
 # Serena
 .serena/
+
+# Obsidian
+obsidian/kanban/tasks/lark-sync.json
+.kanban.json

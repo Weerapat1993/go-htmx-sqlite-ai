@@ -84,7 +84,7 @@ DB_URL=/data/myapp.db
 
 The application provides a basic health check endpoint:
 
-- **GET /health** - Returns `200 OK` with `{"version":"dev"}`
+- **GET /api/health** - Returns `200 OK` with `{"version":"dev"}`
 
 This endpoint is suitable for basic liveness checks from load balancers or monitoring systems.
 

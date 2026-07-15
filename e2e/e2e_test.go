@@ -276,10 +276,10 @@ func startRateLimitApp() error {
 	return waitForHealthCheck(rateLimitURL)
 }
 
-// waitForHealthCheck polls the /health endpoint until it responds successfully.
+// waitForHealthCheck polls the /api/health endpoint until it responds successfully.
 // Returns nil on success, error on timeout or other failure.
 func waitForHealthCheck(baseURL string) error {
-	healthURL := baseURL + "/health"
+	healthURL := baseURL + "/api/health"
 	timeout := time.After(10 * time.Second)
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()

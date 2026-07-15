@@ -2,6 +2,8 @@
 
 Fork of [Piszmog/go-htmx-template](https://github.com/Piszmog/go-htmx-template) — a Web Application built with Go (`templ`), HTMX, a SQL DB (`sqlc`), E2E testing (Playwright), and styling (Tailwind CSS).
 
+**Live demo:** https://go-htmx-sqlite-ai-production.up.railway.app/
+
 ## Installation
 
 **Prerequisites**
@@ -26,6 +28,12 @@ Apply DB migrations:
 
 ```shell
 ./migrate.sh -p sqlite -u ./db.sqlite3
+```
+
+For Turso (remote libSQL) instead of local SQLite:
+
+```shell
+./migrate.sh -p libsql -u <db>-<org>.turso.io -t <auth-token>
 ```
 
 Copy environment config (optional, customize as needed):
@@ -67,16 +75,23 @@ The application can be configured using environment variables. For local develop
 | `PORT` | `8080` | HTTP server port |
 | `LOG_LEVEL` | `info` | Logging level: `debug`, `info`, `warn`, `error` |
 | `LOG_OUTPUT` | `text` | Log format: `text` or `json` |
-| `DB_URL` | `./db.sqlite3` | Path to SQLite database file |
+| `DB_URL` | `./db.sqlite3` | Local SQLite file path, or a `libsql://<db>-<org>.turso.io` URL for Turso (remote) |
+| `TURSO_AUTH_TOKEN` | _(none)_ | Auth token for Turso — only used when `DB_URL` is a `libsql://` URL |
 | `RATE_LIMIT` | `50` | Requests per minute per IP address |
 
 ### Example
 
 ```bash
-# .env
+# .env — local SQLite
 PORT=3000
 LOG_LEVEL=debug
 DB_URL=/data/myapp.db
+```
+
+```bash
+# .env — Turso (remote)
+DB_URL=libsql://myapp-myorg.turso.io
+TURSO_AUTH_TOKEN=eyJhbGciOi...
 ```
 
 ## Endpoints
@@ -185,18 +200,26 @@ See `AGENTS.md` for the full project structure and code-style conventions.
 ## Deploy Railway
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/KnYa4C?referralCode=HtBp41&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
-> **Note:** the one-click template above may predate the migration entrypoint / volume / env vars described below — if the deploy comes up without a `/data` volume or `DB_URL` set, follow Manual setup instead.
+> **Note:** the one-click template above may predate the migration entrypoint / Turso / env vars described below — if the deploy comes up without `DB_URL`/`TURSO_AUTH_TOKEN` set, follow Manual setup instead.
+
+Railway's container filesystem is ephemeral — every deploy/restart is a fresh container. A local SQLite file (`DB_URL=./db.sqlite3`) gets wiped and re-migrated from scratch each time unless backed by a Volume, and **Railway's Trial plan does not support Volumes**. Recommended fix: use [Turso](https://turso.tech) (free-tier hosted libSQL) as the database instead — persists regardless of plan, no Volume needed.
 
 ### Manual setup
 
 1. **New Project → Deploy from GitHub repo**, select this repo. Railway auto-detects the root `Dockerfile` — no Buildpack/Nixpacks config needed.
 2. **Root Directory**: leave blank/default. `Dockerfile` is at the repo root, not a subfolder.
 3. **Custom Start Command**: leave blank. The deploy image is `gcr.io/distroless/static-debian13` (no shell), so a start command that Railway would normally run via `/bin/sh -c` will crash the container. The `Dockerfile`'s `CMD ["/entrypoint"]` handles startup — it applies pending DB migrations, then execs into the server binary.
-4. **Volumes**: add one, mounted at `/data`. Without it, the SQLite file is lost on every redeploy/restart.
-   > Railway's **Trial plan does not support Volumes**. If you're on Trial and `DB_URL` points at a path with no matching Volume (e.g. `/data/db.sqlite3`), the container crashes on boot with `entrypoint: migrate init: failed to open database: unable to open database file (14)` — the directory simply doesn't exist in the image. Fallback: set `DB_URL=/db.sqlite3` (root of the container, no directory needed) to unblock the deploy. Data will not persist across redeploys/restarts until you upgrade and attach a Volume.
+4. **Database — Turso**:
+   ```shell
+   turso auth login
+   turso db create <name>
+   turso db show <name> --url        # -> libsql://<db>-<org>.turso.io
+   turso db tokens create <name>
+   ```
 5. **Variables**:
    ```
-   DB_URL=/db.sqlite3
+   DB_URL=libsql://<db>-<org>.turso.io
+   TURSO_AUTH_TOKEN=<token from `turso db tokens create`>
    LOG_LEVEL=info
    LOG_OUTPUT=json
    RATE_LIMIT=50
@@ -204,6 +227,8 @@ See `AGENTS.md` for the full project structure and code-style conventions.
    Do not set `PORT` — Railway injects it and the app already reads it.
 6. **Build Args** (optional but recommended): set `VERSION` to a git SHA or release tag. `internal/version.Value` is compared against `"dev"` to decide whether the router trusts proxy headers for client IP — Railway sits behind a proxy, so this should not be left as `dev` in production.
 
+**Prefer local SQLite instead?** Requires a paid Railway plan (Trial has no Volumes): attach a Volume at `/data`, set `DB_URL=/data/db.sqlite3`.
+
 ### Limits
 
-SQLite uses a file lock — run a single replica, no horizontal scaling. For multi-replica deploys, swap to Postgres or Turso/libsql (`migrate.sh` already supports the `libsql` protocol).
+Local SQLite uses a file lock — single replica only, no horizontal scaling. Turso removes that constraint (it's a remote DB, no local file lock) — multi-replica deploys work when `DB_URL` is a `libsql://` URL.

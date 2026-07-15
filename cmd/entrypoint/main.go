@@ -9,6 +9,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 	"syscall"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -22,7 +24,18 @@ func main() {
 		dbURL = "./db.sqlite3"
 	}
 
-	m, err := migrate.New("file:///migrations", "sqlite://"+dbURL)
+	// golang-migrate's sqlite:// DSN parses the segment after "//" as the URL
+	// host, so a relative path like "./db.sqlite3" is misread and the driver
+	// returns SQLITE_CANTOPEN (error 14). Resolve to an absolute path first,
+	// mirroring the workaround already documented in migrate.sh.
+	dbURL = strings.TrimPrefix(dbURL, "file:")
+	absDBPath, err := filepath.Abs(dbURL)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "entrypoint: resolve db path:", err)
+		os.Exit(1)
+	}
+
+	m, err := migrate.New("file:///migrations", "sqlite://"+absDBPath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "entrypoint: migrate init:", err)
 		os.Exit(1)
@@ -32,6 +45,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// #nosec G204 -- path and args are hardcoded literals, not user input.
 	if err := syscall.Exec("/my-app", []string{"/my-app"}, os.Environ()); err != nil {
 		fmt.Fprintln(os.Stderr, "entrypoint: exec server:", err)
 		os.Exit(1)

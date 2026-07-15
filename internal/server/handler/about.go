@@ -11,5 +11,5 @@ import (
 // About handles the about page.
 func (h *Handler) About(w http.ResponseWriter, r *http.Request) {
 	page := layout.Shell("about", about.Page())
-	h.html(r.Context(), w, http.StatusOK, core.HTML("About — go-htmx-sqlite-ai", page))
+	h.html(r.Context(), w, core.HTML("About — go-htmx-sqlite-ai", page))
 }

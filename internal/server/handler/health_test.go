@@ -2,6 +2,7 @@ package handler_test
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"io"
 	"log/slog"
@@ -12,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/db"
 	"github.com/Weerapat1993/go-htmx-sqlite-ai/internal/server/handler"
 )
 
@@ -42,16 +44,17 @@ func TestHealth(t *testing.T) {
 				t.Helper()
 				body, err := io.ReadAll(rec.Body)
 				require.NoError(t, err)
-				assert.JSONEq(t, `{"version":"dev"}`, string(body))
+				assert.JSONEq(t, `{"status":"ok","version":"dev"}`, string(body))
 			},
 		},
 		{
-			name: "returns valid JSON structure with version field",
+			name: "returns valid JSON structure with status and version fields",
 			validate: func(t *testing.T, rec *httptest.ResponseRecorder) {
 				t.Helper()
 				var result map[string]string
 				err := json.NewDecoder(rec.Body).Decode(&result)
 				require.NoError(t, err)
+				assert.Equal(t, "ok", result["status"])
 				assert.Equal(t, "dev", result["version"])
 			},
 		},
@@ -88,6 +91,24 @@ func TestHealth_NoDatabase(t *testing.T) {
 	assert.Equal(t, http.StatusOK, rec.Code)
 }
 
+func TestHealth_DatabaseDown(t *testing.T) {
+	t.Parallel()
+
+	rawDB, err := sql.Open("sqlite", "file::memory:")
+	require.NoError(t, err)
+	require.NoError(t, rawDB.Close()) // force ping failures
+
+	h := handler.New(slog.New(slog.DiscardHandler), db.NewFromRawDB(rawDB))
+
+	req := httptest.NewRequestWithContext(context.Background(), http.MethodGet, "/api/health", nil)
+	rec := httptest.NewRecorder()
+
+	h.Health(rec, req)
+
+	assert.Equal(t, http.StatusServiceUnavailable, rec.Code)
+	assert.JSONEq(t, `{"status":"degraded","version":"dev"}`, rec.Body.String())
+}
+
 func TestHealth_MultipleRequests(t *testing.T) {
 	t.Parallel()
 	h := handler.New(slog.New(slog.DiscardHandler), nil)
@@ -100,6 +121,6 @@ func TestHealth_MultipleRequests(t *testing.T) {
 		h.Health(rec, req)
 
 		assert.Equal(t, http.StatusOK, rec.Code)
-		assert.JSONEq(t, `{"version":"dev"}`, rec.Body.String())
+		assert.JSONEq(t, `{"status":"ok","version":"dev"}`, rec.Body.String())
 	}
 }

@@ -193,9 +193,10 @@ See `AGENTS.md` for the full project structure and code-style conventions.
 2. **Root Directory**: leave blank/default. `Dockerfile` is at the repo root, not a subfolder.
 3. **Custom Start Command**: leave blank. The deploy image is `gcr.io/distroless/static-debian13` (no shell), so a start command that Railway would normally run via `/bin/sh -c` will crash the container. The `Dockerfile`'s `CMD ["/entrypoint"]` handles startup — it applies pending DB migrations, then execs into the server binary.
 4. **Volumes**: add one, mounted at `/data`. Without it, the SQLite file is lost on every redeploy/restart.
+   > Railway's **Trial plan does not support Volumes**. If you're on Trial and `DB_URL` points at a path with no matching Volume (e.g. `/data/db.sqlite3`), the container crashes on boot with `entrypoint: migrate init: failed to open database: unable to open database file (14)` — the directory simply doesn't exist in the image. Fallback: set `DB_URL=/db.sqlite3` (root of the container, no directory needed) to unblock the deploy. Data will not persist across redeploys/restarts until you upgrade and attach a Volume.
 5. **Variables**:
    ```
-   DB_URL=/data/db.sqlite3
+   DB_URL=/db.sqlite3
    LOG_LEVEL=info
    LOG_OUTPUT=json
    RATE_LIMIT=50
